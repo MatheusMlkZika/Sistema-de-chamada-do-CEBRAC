@@ -18,7 +18,7 @@
   <link rel="stylesheet" href="style.css">
   
   <style>
-      /* Painel Dev Hacker */
+      /* Painel Administrativo de Atualizacoes */
       .icone-dev { color: var(--accent-blue); cursor: pointer; font-size: 20px; }
       .dev-panel { background: #000; border: 1px solid var(--accent-blue); padding: 15px; border-radius: 8px; margin-bottom: 20px; }
       .dev-badge { background: var(--accent-blue); color: #fff; font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-bottom: 10px; }
@@ -107,15 +107,15 @@
                 </div>
             </div>
 
-            <div id="painelHacker" style="display:none;" class="dev-panel animate__animated animate__flipInX">
-                <div class="dev-badge">ROOT ACCESS</div>
+            <div id="painelMatheus" style="display:none;" class="dev-panel animate__animated animate__flipInX">
+                <div class="dev-badge">CONTROLE DE VERSÃO</div>
                 <div class="input-group" style="margin-bottom: 10px;">
                     <input type="text" id="devVersao" placeholder="Versão (ex: v1.5)">
                 </div>
                 <div class="input-group" style="margin-bottom: 0;">
                     <input type="text" id="devNotas" placeholder="O que mudou no app?">
                 </div>
-                <button onclick="dispararAtualizacaoDev()" class="btn-dev">Lançar Patch</button>
+                <button onclick="dispararAtualizacaoDev()" class="btn-dev">Lançar Atualização</button>
             </div>
 
             <div class="dashboard-cards">
