@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ADM Cebrac</title>
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+  
+  <style>
+    :root {
+        --bg-escuro: #121214;
+        --bg-card: #202024;
+        --amarelo-neon: #fba94c;
+        --laranja-neon: #ff7a00;
+        --verde-neon: #00e676;
+        --texto-claro: #e1e1e6;
+        --texto-mudo: #a8a8b3;
+        --borda: rgba(255, 255, 255, 0.05);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+    
+    body { background-color: var(--bg-escuro); color: var(--texto-claro); padding: 20px 40px; }
+
+    header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--borda); padding-bottom: 20px; margin-bottom: 30px; }
+    header h1 { font-size: 24px; color: var(--texto-claro); display: flex; align-items: center; gap: 10px; font-weight: 600; }
+    header h1 i { color: var(--amarelo-neon); }
+    .btn-acao { background: transparent; border: 1px solid var(--amarelo-neon); color: var(--amarelo-neon); padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.3s; display: flex; align-items: center; gap: 8px; }
+    .btn-acao:hover { background: var(--amarelo-neon); color: var(--bg-escuro); }
+    .btn-perigo { border-color: #ff4a4a; color: #ff4a4a; }
+    .btn-perigo:hover { background: #ff4a4a; color: white; }
+
+    .linha-kpi { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 30px; }
+    .card-kpi { background: var(--bg-card); border-top: 3px solid var(--texto-mudo); border-radius: 12px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: transform 0.2s; }
+    .card-kpi:hover { transform: translateY(-5px); }
+    .kpi-destaque { border-color: var(--amarelo-neon); }
+    .card-kpi h4 { color: var(--texto-mudo); font-size: 13px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; font-weight: 500; }
+    .card-kpi .valor { font-size: 32px; font-weight: bold; color: var(--texto-claro); margin-bottom: 5px; }
+    .card-kpi .subtexto { font-size: 12px; color: var(--amarelo-neon); }
+
+    .layout-central { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-bottom: 30px; }
+    .painel { background: var(--bg-card); border-radius: 12px; padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+    .painel h3 { font-size: 16px; color: var(--texto-claro); margin-bottom: 20px; font-weight: 500; border-bottom: 1px solid var(--borda); padding-bottom: 10px;}
+    
+    .grafico-container { position: relative; height: 300px; width: 100%; }
+
+    .controles-quiz input { width: 100%; background: var(--bg-escuro); border: 1px solid var(--borda); color: var(--texto-claro); padding: 12px; border-radius: 6px; margin-bottom: 10px; outline: none; }
+    .controles-quiz input:focus { border-color: var(--amarelo-neon); }
+    .grid-opcoes { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+
+    .tabela-container { background: var(--bg-card); border-radius: 12px; padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; text-align: left; }
+    th { padding: 15px; color: var(--amarelo-neon); font-size: 13px; text-transform: uppercase; border-bottom: 1px solid var(--borda); font-weight: 600; }
+    td { padding: 15px; border-bottom: 1px solid var(--borda); font-size: 14px; color: var(--texto-claro); }
+    tr:hover td { background: rgba(255,255,255,0.02); }
+    .badge-ok { background: rgba(0, 230, 118, 0.1); color: var(--verde-neon); padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+    .badge-erro { background: rgba(255, 74, 74, 0.1); color: #ff4a4a; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+  </style>
+</head>
+<body>
+
+  <header class="animate__animated animate__fadeInDown">
+      <h1>PAINEL DA PROFESSORA MARCELA PORTP👑</h1>
+      <div style="display: flex; gap: 15px;">
+          <button class="btn-acao btn-perigo" onclick="confirmarEncerramento()"><i class="fa-solid fa-power-off"></i> Encerrar Chamada</button>
+          <button class="btn-acao" onclick="gerarNovoPin()"><i class="fa-solid fa-arrows-rotate"></i> Novo PIN</button>
+      </div>
+  </header>
+
+  <main>
+      <div class="linha-kpi animate__animated animate__fadeInUp">
+          <div class="card-kpi kpi-destaque">
+              <h4>PIN para marcar presença</h4>
+              <div class="valor" id="pinDisplay" style="color: var(--amarelo-neon); letter-spacing: 4px;">****</div>
+              <div class="subtexto"><i class="fa-solid fa-lock"></i> Código de acesso atual</div>
+          </div>
+          <div class="card-kpi">
+              <h4>Presenças Hoje</h4>
+              <div class="valor" id="kpiPresencas">0</div>
+              <div class="subtexto" style="color: var(--verde-neon);"><i class="fa-solid fa-users"></i> Alunos na sala</div>
+          </div>
+          <div class="card-kpi">
+              <h4>Taxa de Atraso</h4>
+              <div class="valor" id="kpiAtrasos">0%</div>
+              <div class="subtexto" style="color: #ff4a4a;"><i class="fa-solid fa-clock"></i> Requer atenção</div>
+          </div>
+          <div class="card-kpi">
+              <h4>Humor Dominante</h4>
+              <div class="valor" id="kpiHumor" style="font-size: 24px; padding-top: 8px;">Calculando...</div>
+              <div class="subtexto"><i class="fa-solid fa-face-smile"></i> Clima da turma</div>
+          </div>
+      </div>
+
+      <div class="layout-central animate__animated animate__fadeInUp" style="animation-delay: 0.1s;">
+          <div class="painel">
+              <h3>ANÁLISE DE FREQUÊNCIA MENSAL</h3>
+              <div class="grafico-container">
+                  <canvas id="graficoBarras"></canvas>
+              </div>
+          </div>
+          
+          <div class="painel controles-quiz">
+              <h3 style="color: var(--amarelo-neon);">COMANDO DE OPERAÇÕES</h3>
+              <p style="font-size: 13px; color: var(--texto-mudo); margin-bottom: 15px;">Envie uma pergunta na tela dos alunos em tempo real.</p>
+              
+              <input type="text" id="perguntaQuiz" placeholder="Digite a pergunta do desafio...">
+              <div class="grid-opcoes">
+                  <input type="text" id="op1" placeholder="Opção 1">
+                  <input type="text" id="op2" placeholder="Opção 2">
+                  <input type="text" id="op3" placeholder="Opção 3">
+                  <input type="number" id="respCorreta" placeholder="Certa (1, 2 ou 3)">
+              </div>
+              
+              <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                  <button id="btnEnviarQuiz" class="btn-acao" style="flex: 1; justify-content: center;" onclick="lancarQuiz()">
+                      <i class="fa-solid fa-rocket"></i> Enviar
+                  </button>
+                  <button id="btnEncerrarQuiz" class="btn-acao btn-perigo" style="flex: 1; justify-content: center;" onclick="encerrarQuiz()">
+                      <i class="fa-solid fa-ban"></i> Encerrar
+                  </button>
+              </div>
+              
+              <button class="btn-acao" style="width: 100%; justify-content: center; border-color: var(--verde-neon); color: var(--verde-neon);" onclick="exportarExcel()">
+                  <i class="fa-solid fa-file-excel"></i> Exportar Dados da Chamada
+              </button>
+          </div>
+      </div>
+
+      <div class="tabela-container animate__animated animate__fadeInUp" style="animation-delay: 0.2s;">
+          <h3 style="font-size: 16px; color: var(--texto-claro); margin-bottom: 20px; font-weight: 500;">DETALHAMENTO DIÁRIO</h3>
+          <table>
+              <thead>
+                  <tr>
+                      <th>Aluno</th>
+                      <th>Horário de Checkin</th>
+                      <th>Status Aluno</th>
+                      <th>Estado do Humor</th>
+                  </tr>
+              </thead>
+              <tbody id="tabelaPresenca">
+                  <tr><td colspan="4" style="text-align: center; color: var(--texto-mudo);">Aguardando sincronização de dados...</td></tr>
+              </tbody>
+          </table>
+      </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    const supabaseUrl = 'https://yhnfsmloqcjfwsbeidvv.supabase.co';
+    const supabaseKey = 'sb_publishable_vFH_ZuHkvqjZU41gl7gNpw_LgiQHpcC';
+    const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+    let chartBarras;
+
+    async function gerarNovoPin() {
+        const novoPin = Math.floor(1000 + Math.random() * 9000).toString();
+        const display = document.getElementById('pinDisplay');
+        display.innerText = "....";
+        await supabaseClient.from('eventos').update({ pin_atual: novoPin }).eq('id', 1);
+        display.innerText = novoPin;
+    }
+
+    async function confirmarEncerramento() {
+        await supabaseClient.from('eventos').update({ pin_atual: "FECHADO" }).eq('id', 1);
+        document.getElementById('pinDisplay').innerText = "FECHADO";
+        document.getElementById('pinDisplay').style.color = "#ff4a4a";
+    }
+
+    async function carregarPinAtual() {
+        const { data } = await supabaseClient.from('eventos').select('pin_atual').eq('id', 1).single();
+        if (data && data.pin_atual) {
+            document.getElementById('pinDisplay').innerText = data.pin_atual;
+            if(data.pin_atual === "FECHADO") document.getElementById('pinDisplay').style.color = "#ff4a4a";
+        }
+    }
+
+    async function atualizarInterface() {
+        const hoje = new Date().toISOString().split('T')[0];
+        const mesAtual = hoje.slice(0, 7);
+        
+        const { data: chamadasMes } = await supabaseClient.from('chamadas').select('*').like('data_aula', `${mesAtual}%`);
+        
+        if (chamadasMes) {
+            const chamadasHoje = chamadasMes.filter(r => r.data_aula === hoje);
+            
+            document.getElementById('kpiPresencas').innerText = chamadasHoje.length;
+            
+            let atrasosHoje = chamadasHoje.filter(r => r.atrasado).length;
+            let taxaAtraso = chamadasHoje.length > 0 ? Math.round((atrasosHoje / chamadasHoje.length) * 100) : 0;
+            document.getElementById('kpiAtrasos').innerText = `${taxaAtraso}%`;
+
+            if(chamadasHoje.length > 0) {
+                let humores = chamadasHoje.map(r => r.humor);
+                let humorMaisComum = humores.sort((a,b) => humores.filter(v => v===a).length - humores.filter(v => v===b).length).pop();
+                document.getElementById('kpiHumor').innerText = humorMaisComum.split(' ')[0] + " Dominante";
+            } else {
+                document.getElementById('kpiHumor').innerText = "Sem dados";
+            }
+
+            const tbody = document.getElementById('tabelaPresenca');
+            tbody.innerHTML = "";
+            if (chamadasHoje.length > 0) {
+                chamadasHoje.reverse().forEach(reg => {
+                    const tr = document.createElement('tr');
+                    let statusHtml = reg.atrasado ? '<span class="badge-erro">Atrasado</span>' : '<span class="badge-ok">No Horário</span>';
+                    tr.innerHTML = `<td><strong>${reg.nome}</strong></td><td>${reg.horario}</td><td>${statusHtml}</td><td>${reg.humor}</td>`;
+                    tbody.appendChild(tr);
+                });
+            } else {
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: var(--texto-mudo);">Aguardando sincronização de dados...</td></tr>';
+            }
+
+            let dadosGrafico = {};
+            chamadasMes.forEach(reg => {
+                let dia = reg.data_aula.split('-')[2];
+                if(!dadosGrafico[dia]) dadosGrafico[dia] = 0;
+                dadosGrafico[dia]++;
+            });
+
+            Chart.defaults.color = '#a8a8b3'; 
+            Chart.defaults.font.family = 'Segoe UI';
+
+            if(chartBarras) chartBarras.destroy();
+            chartBarras = new Chart(document.getElementById('graficoBarras'), {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(dadosGrafico).map(d => `Dia ${d}`),
+                    datasets: [{
+                        label: 'Presenças',
+                        data: Object.values(dadosGrafico),
+                        backgroundColor: '#fba94c',
+                        borderRadius: 4
+                    }]
+                },
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false, 
+                    plugins: { legend: { display: false } },
+                    scales: { 
+                        y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' } },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+        }
+    }
+
+    async function lancarQuiz() {
+        const pergunta = document.getElementById('perguntaQuiz').value;
+        const o1 = document.getElementById('op1').value;
+        const o2 = document.getElementById('op2').value;
+        const o3 = document.getElementById('op3').value;
+        const certa = document.getElementById('respCorreta').value;
+
+        if (!pergunta || !certa) {
+            document.getElementById('perguntaQuiz').placeholder = "PREENCHA TUDO ANTES DE ENVIAR!";
+            return;
+        }
+        
+        await supabaseClient.from('eventos').update({ pergunta: pergunta, op1: o1, op2: o2, op3: o3, resposta_correta: certa, quiz_ativo: true }).eq('id', 1);
+        
+        document.getElementById('perguntaQuiz').value = "";
+        document.getElementById('op1').value = "";
+        document.getElementById('op2').value = "";
+        document.getElementById('op3').value = "";
+        document.getElementById('respCorreta').value = "";
+        
+        const btn = document.getElementById('btnEnviarQuiz');
+        const textoOriginal = btn.innerHTML;
+        btn.innerHTML = '<i class="fa-solid fa-check"></i> Enviado';
+        btn.style.borderColor = "var(--verde-neon)";
+        btn.style.color = "var(--verde-neon)";
+        
+        setTimeout(() => {
+            btn.innerHTML = textoOriginal;
+            btn.style.borderColor = "var(--amarelo-neon)";
+            btn.style.color = "var(--amarelo-neon)";
+        }, 2000);
+    }
+
+    async function encerrarQuiz() {
+        await supabaseClient.from('eventos').update({ quiz_ativo: false }).eq('id', 1);
+        
+        const btn = document.getElementById('btnEncerrarQuiz');
+        const textoOriginal = btn.innerHTML;
+        btn.innerHTML = '<i class="fa-solid fa-check"></i> Desativado';
+        
+        setTimeout(() => {
+            btn.innerHTML = textoOriginal;
+        }, 2000);
+    }
+
+    async function exportarExcel() {
+        const { data } = await supabaseClient.from('chamadas').select('*');
+        const worksheet = XLSX.utils.json_to_sheet(data);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Chamada");
+        XLSX.writeFile(workbook, "Relatorio_Chamada.xlsx");
+    }
+
+    setInterval(atualizarInterface, 5000);
+    window.onload = function() { carregarPinAtual(); atualizarInterface(); }
+  </script>
+</body>
+</html>
