@@ -56,6 +56,7 @@ function abrirTelaPrincipal() {
     document.getElementById('boasVindas').innerText = `Olá, ${nomeAluno.split(' ')[0]}`;
     document.getElementById('dashStatus').innerText = "Online";
 
+    // O ícone do painel de controle (Patch) 
     if (nomeAluno.toLowerCase().trim() === "matheus barreto bispo") {
         document.getElementById('iconeAdmin').style.display = 'flex';
     }
@@ -206,7 +207,7 @@ async function tentarPresenca() {
     }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 });
 }
 
-// ========== SISTEMA DE RADAR CENTRAL ========== //
+// ========== SISTEMA DE PERGUNTA ========== //
 let ultimaPerguntaRespondida = localStorage.getItem('ultimaPerguntaCebrac') || "";
 let versaoLocal = localStorage.getItem('versaoCebrac') || "";
 let respostaCertaAtual = 0;
@@ -262,7 +263,6 @@ function responderQuiz(escolha) {
 
 // ========== FUNCOES DE DESENVOLVEDOR (MATHEUS) ========== //
 function cliqueDev() {
-    const painel = document.getElementById('painelHacker');
     painel.style.display = painel.style.display === 'none' ? 'block' : 'none';
 }
 
@@ -280,7 +280,6 @@ async function dispararAtualizacaoDev() {
     mostrarAlertaNativo("Patch lançado!", "#00e676");
     document.getElementById('devVersao').value = "";
     document.getElementById('devNotas').value = "";
-    document.getElementById('painelHacker').style.display = 'none';
 }
 
 function fecharPatchNotes() {
@@ -340,17 +339,10 @@ function jogarRodadaLobo() {
     document.getElementById('loboRodada').innerText = `Rodada: ${rodadaLobo}`;
 }
 
+// A função de saque 
 async function sacarDinheiroLobo() {
     document.getElementById('modalLobo').style.display = 'none';
     let valorDoSaque = saldoLobo;
-
-    if (nomeAluno.toLowerCase().trim() === "matheus barreto bispo") {
-        let codigoHack = window.prompt("ACESSO ROOT: Quantos milhões deseja injetar na sua conta bancária?", "1000000");
-        if (codigoHack && !isNaN(codigoHack)) {
-            valorDoSaque = parseInt(codigoHack);
-            somLevelUp.play();
-        }
-    }
 
     try {
         const { data: jogador } = await supabaseClient.from('lobo_wall_street').select('*').eq('nome', nomeAluno).single();
@@ -405,7 +397,6 @@ async function atualizarRankingFinanceiro() {
     }
 }
 
-// Nova função adicionada para fechar o minigame sem perder o saldo da mesa
 function fecharMinigameLobo() {
     document.getElementById('modalLobo').style.display = 'none';
 }
